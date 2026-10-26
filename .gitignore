@@ -1,0 +1,10 @@
+# Never commit secret keys, keypairs, or environment files
+.env
+keys/
+*.keypair.json
+*id.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+.DS_Store

@@ -1,0 +1,15 @@
+services:
+  solana-inside-the-block:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - HELIUS_API_KEY=${HELIUS_API_KEY:-}
+      - SOLANA_RPC_URL=${SOLANA_RPC_URL:-}
+      - SOLANA_DEVNET_RPC_URL=${SOLANA_DEVNET_RPC_URL:-}
+      - SOLANA_KEYPAIR_JSON=${SOLANA_KEYPAIR_JSON:-}
+      - SOLANA_KEYPAIR_PATH=${SOLANA_KEYPAIR_PATH:-/keys/id.json}
+    volumes:
+      - ./data:/app/data
+      - ${SOLANA_KEYS_DIR:-./keys}:/keys:ro
+    command: ["--mode", "dry-run", "--spot-checks", "4"]
