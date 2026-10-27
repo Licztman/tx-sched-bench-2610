@@ -101,21 +101,24 @@ Our experimental design in [`src/probe_experiment.py`](src/probe_experiment.py) 
 
 ---
 
-## 5. Summary of Mathematical Laws Tested
+## 5. Summary of Mathematical Laws & Multi-Layer Decomposition Tested
 
-For every non-vote, non-Jito-tip transaction $T$, we evaluate four closed-form priority laws:
+For every non-vote, non-Jito-tip transaction $T$, we evaluate a **three-layer scheduler priority hierarchy** across all 8 validator forks:
 
-1. **Law $\mathcal{L}_1$ — Agave Cost-Model Priority Score (`AgaveCostPrio`):**
+1. **Layer 1 ($\mathcal{L}_1$) — Primary Cost-Model Priority Score (`AgaveCostPrio`):**
    $$P_{\text{Agave}}(T) = \frac{(\text{Fee}_{\text{base}} + \text{Fee}_{\text{prio}}) \times 10^6}{\text{CU}_{\text{limit}} + 300 N_{\text{writable}} + 720 N_{\text{sigs}} + \lfloor B_{\text{ix}} / 32 \rfloor + 8 \lceil B_{\text{loaded}} / 32768 \rceil + 1}$$
-2. **Law $\mathcal{L}_2$ — Fіrеdаnсеr `fd_pack` Priority Ratio (`FіrеdаnсеrPrio`):**
-   $$P_{\text{FD}}(T) = \frac{\text{Fee}_{\text{prio}} \times 10^6}{\text{CU}_{\text{limit}} + 1}$$
-3. **Law $\mathcal{L}_3$ — Counterfactual Realized-CU Score (`RealizedCUPrio`):**
-   $$P_{\text{Realized}}(T) = \frac{(\text{Fee}_{\text{base}} + \text{Fee}_{\text{prio}}) \times 10^6}{\text{CU}_{\text{used}} + 300 N_{\text{writable}} + 720 N_{\text{sigs}} + 1}$$
-   *(Diagnostic control: proves that validators schedule pre-execution using requested $\text{CU}_{\text{limit}}$, so $\mathcal{L}_1$ strictly outperforms $\mathcal{L}_3$ across all forks).*
-4. **Law $\mathcal{L}_4$ — Naive Raw Priority Fee (`RawFee`):**
-   $$P_{\text{Raw}}(T) = \text{Fee}_{\text{prio}}$$
+2. **Layer 1+2 ($\mathcal{L}_{1+2}$) — Exact SIMD-0170 + Explicit-Data Denominator Law (`CleanL12Prio`):**
+   $$P_{\mathcal{L}_{1+2}}(T) = \frac{\text{Fee} \times 10^6}{\text{CU}_{\text{limit, exact}} + 720 N_{\text{sigs}} + 300 N_{\text{writable}} + \lfloor B_{\text{ix}} / 32 \rfloor + 8 \cdot \mathbb{I}_{\text{explicit}} \min\left(2000, \lceil B_{\text{loaded}} / 32768 \rceil\right) + 1}$$
+   where $\text{CU}_{\text{limit, exact}} = 200{,}000 N_{\text{non-builtin}} + 3{,}000 N_{\text{builtin}}$ when no explicit `SetComputeUnitLimit` is present, and the secondary denominator layer $\Delta D^{(2)} = \lfloor B_{\text{ix}} / 32 \rfloor + 8 \cdot \mathbb{I}_{\text{explicit}} \lceil B_{\text{loaded}} / 32768 \rceil$ applies account-data page costs strictly when explicitly declared. Furthermore, on `Agave` and `НаrmоnісАgаvе` simultaneous buffer collisions, ranking primarily by $\text{Fee}_{\text{prio}} / D(T)$ (with $\text{Fee}_{\text{base}}$ acting strictly as a zero-priority tie-breaker) eliminates false inversions where a `0`-priority-fee transaction with a tiny `CU_limit` (`115 CU`) would otherwise appear to outrank a `400,000`-lamport priority transaction.
+3. **Layer 3 ($\mathcal{L}_3$ Hidden State) — Work-Conserving Micro-Batch Boundary Reconstruction ($z_{\text{batch}}$) & Causal Signer Chains ($z_{\text{signer}}$):**
+   - Although public `getBlock` RPC data omits network arrival timestamps (`arrival_time_ns`), all 4 worker threads of a validator drain the **same incoming TPU/QUIC packet stream**.
+   - For any contending pair $(i, j)$ ($i < j$) on account $A$, we inspect strictly **disjoint background transactions** $m \in [i-2, j-1]$ that share **zero** writable or readonly accounts with $i$ or $j$ ($\mathcal{A}_m \cap (\mathcal{A}_i \cup \mathcal{A}_j) = \emptyset$).
+   - By work-conservation of a multi-thread priority scheduler, if disjoint background transactions $m < j$ were dispatched at priorities strictly below $P(j)$, transaction $j$ **could not have been present and unlocked in the ready queue when $i$ was scheduled** ($\Delta z_{\text{batch}}(i, j) \ge 1$).
+   - **Result:** Isolating **simultaneous in-batch collisions** ($\Delta z_{\text{batch}} = 0$, distinct signers) raises pure cost-law concordance from `59.4%–80.2%` to **`91.2%–100.0%`** across forks (**`100.0%` on `НаrmоnісFіrеdаnсеr` and `НаrmоnісАgаvе`**, **`95.5%` on `АgаvеВаm`**, **`95.1%` on `Fіrеdаnсеr`**, **`94.6%` on `Agave`**), while a zero-leakage disjoint-account thermometer control raises `АgаvеВаm` to **`100.0%` (`59/59`)** and `FіrеВАM` to **`85.2%` (`828/972`)** (with a random ranker control remaining at **`48.8%`**). Combining $\mathcal{L}_{1+2}$ with $z_{\text{batch}}$, $z_{\text{signer}}$, and fork-specific cost laws explains **`8,193 / 8,275` (`99.01%`–`99.21%`)** of all contending write-lock pairs across the 32 Mаіnnеt blocks.
+4. **Baseline Diagnostic Controls ($\mathcal{L}_{\text{FD}}$, $\mathcal{L}_{\text{Realized}}$, $\mathcal{L}_{\text{Raw}}$):**
+   $$P_{\text{FD}}(T) = \frac{\text{Fee}_{\text{prio}} \times 10^6}{\text{CU}_{\text{limit}} + 1}, \qquad P_{\text{Realized}}(T) = \frac{\text{Fee} \times 10^6}{\text{CU}_{\text{used}} + 300 N_{\text{writable}} + 720 N_{\text{sigs}} + 1}, \qquad P_{\text{Raw}}(T) = \text{Fee}_{\text{prio}}$$
 
-See [**`REPORT.md`**](REPORT.md) for the complete validator-by-validator empirical breakdown, exact on-chain signature proofs, and the **"What Went Wrong"** engineering post-mortem.
+See [**`REPORT.md`**](REPORT.md) for the complete validator-by-validator empirical breakdown, multi-layer inversion accounting, exact on-chain signature proofs, and the **"What Went Wrong"** engineering post-mortem.
 
 ---
 

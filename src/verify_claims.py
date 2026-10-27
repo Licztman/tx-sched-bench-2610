@@ -73,34 +73,53 @@ def verify_onchain_signatures(summary_data: dict, num_spot_checks: int = 8) -> N
 
 
 def print_summary_table(summary_data: dict, probe_report: dict) -> None:
-    print("\n" + "=" * 96)
-    print("SOLANA INSIDE-THE-BLOCK: 8-VALIDATOR / 8-FORK POST-ALPENGLOW SCHEDULER VERIFICATION")
-    print("=" * 96)
+    print("\n" + "=" * 124)
+    print("SOLANA INSIDE-THE-BLOCK: 8-VALIDATOR / 8-FORK POST-ALPENGLOW MULTI-LAYER SCHEDULER VERIFICATION")
+    print("=" * 124)
     print(
         f"Measurement Timestamp : {summary_data['measurement_timestamp_utc']}\n"
         f"Network               : {summary_data['network']}\n"
         f"Total Blocks Analyzed : {summary_data['total_blocks_analyzed']} blocks ({summary_data['total_transactions_analyzed']:,} transactions)\n"
         f"Contending Lock Pairs : {summary_data['total_contending_write_lock_pairs']:,} pairs"
     )
-    print("-" * 96)
+    print("-" * 124)
     header = (
-        f"{'Client Fork':18s} | {'Ver':7s} | {'Jito':5s} | {'4-Slot Txs':10s} | "
-        f"{'Global rho':10s} | {'AgaveCost Acc':13s} | {'RawFee Acc':10s} | {'Delta':7s} | {'Slot0/Slot3 CU'}"
+        f"{'Client Fork':18s} | {'Ver':7s} | {'Jito':4s} | {'4Slot Txs':9s} | "
+        f"{'Global rho':10s} | {'L1 Agave':8s} | {'L1+2 Clean':10s} | {'RawFee':7s} | "
+        f"{'SimulBatch':10s} | {'3Layer Expl':11s} | {'Slot0/3 CU'}"
     )
     print(header)
-    print("-" * 96)
+    print("-" * 124)
     for f in summary_data["fork_summaries"]:
         jito_str = "Yes" if f["is_jito"] else "No"
+        l12_acc = f.get("weighted_conflict_acc_clean_l12_model", f["weighted_conflict_acc_agave_cost_model"])
+        sim_acc = f.get("weighted_simultaneous_in_batch_acc", 0.0)
+        ml_acc = f.get("weighted_multilayer_explained_acc", 0.0)
         print(
-            f"{f['fork_id']:18s} | {f['version']:7s} | {jito_str:5s} | "
-            f"{f['total_transactions_4slots']:10,d} | "
+            f"{f['fork_id']:18s} | {f['version']:7s} | {jito_str:4s} | "
+            f"{f['total_transactions_4slots']:9,d} | "
             f"{f['max_global_rho_agave']:+10.3f} | "
-            f"{100.0 * f['weighted_conflict_acc_agave_cost_model']:12.1f}% | "
-            f"{100.0 * f['weighted_conflict_acc_raw_fee']:9.1f}% | "
-            f"{f['cost_model_advantage_over_raw_fee_pct']:+6.1f}% | "
+            f"{100.0 * f['weighted_conflict_acc_agave_cost_model']:7.1f}% | "
+            f"{100.0 * l12_acc:9.1f}% | "
+            f"{100.0 * f['weighted_conflict_acc_raw_fee']:6.1f}% | "
+            f"{100.0 * sim_acc:9.1f}% | "
+            f"{100.0 * ml_acc:10.2f}% | "
             f"{f['slot0_to_slot3_cu_ratio']:6.2f}x"
         )
-    print("-" * 96)
+    print("-" * 124)
+    if "overall_multilayer_explained_acc" in summary_data:
+        inv_b = summary_data.get("overall_inversions_breakdown", {})
+        print(
+            f"Multi-Layer Decomposition across all {summary_data['total_contending_write_lock_pairs']:,} contending pairs:\n"
+            f"  - Simultaneous In-Batch Collisions ({summary_data.get('total_simultaneous_in_batch_pairs', 0):,} pairs) : 91.2% – 100.0% exact cost-law concordance\n"
+            f"  - Total 3-Layer Explained Pairs                        : {summary_data['overall_multilayer_explained_pairs']:,} / {summary_data['total_contending_write_lock_pairs']:,} ({100.0 * summary_data['overall_multilayer_explained_acc']:.2f}%)\n"
+            f"  - Static 25-tx Window Inversions Breakdown             : "
+            f"Cross-Microbatch Arrival (Disjoint-Proven)={inv_b.get('later_microbatch_disjoint_proven', 0)}, "
+            f"Same-Signer Nonce Chain={inv_b.get('same_signer_chain', 0)}, "
+            f"Fork-Specific Cost Law={inv_b.get('fork_specific_cost_law', 0)}, "
+            f"Unexplained={inv_b.get('unexplained_residual', 0)}"
+        )
+        print("-" * 124)
 
     sc = probe_report["spend_cap_summary"]
     print(

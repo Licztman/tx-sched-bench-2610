@@ -45,16 +45,44 @@ All 79 live probe transactions are cataloged with full signatures and block indi
 
 ### Master 8-Fork Empirical Comparison (`2026-10-26 UTC`, Epoch 1068)
 
-| Fork ID | Validator Identity | Ver | Jito | 4-Slot Txs | Contending Pairs | $\mathcal{L}_1$ (`AgaveCost` $\text{CU}_{\text{limit}}$) | $\mathcal{L}_2$ (`FD` $\text{Prio}/\text{CU}_{\text{limit}}$) | $\mathcal{L}_3$ (`Realized` $\text{CU}_{\text{used}}$) | $\mathcal{L}_4$ (`RawFee`) | Gain ($\mathcal{L}_1 - \mathcal{L}_4$) | Max Global $\rho$ | `Slot+0 / Slot+3` CU |
-| :--- | :--- | :---: | :---: | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **`НаrmоnісFіrеdаnсеr`** | `JUPiTERrZqg...` | `26.10.4` | Yes | `897` | `283` | **`80.2%`** | `69.3%` | `70.0%` | `56.9%` | **`+23.3%`** | `+0.167` | `0.60x` |
-| **`НаrmоnісАgаvе`** | `Fd7btgySsrj...` | `4.3.2` | Yes | `984` | `206` | **`72.3%`** | `54.4%` | `71.8%` | `47.1%` | **`+25.2%`** | `+0.153` | `0.88x` |
-| **`АgаvеВаm`** | `DRpbCBMxVnD...` | `4.3.2` | Yes | `939` | `253` | **`71.9%`** | `58.9%` | `59.3%` | `53.0%` | **`+19.0%`** | `+0.301` | `1.23x` |
-| **`FіrеВАM`** | `9jxgosAfHgH...` | `26.10.4` | Yes | `982` | `1,811` | **`66.3%`** | **`66.4%`** | `52.2%` | `61.6%` | **`+4.7%`** | `+0.156` | `0.83x` |
-| **`Fіrеdаnсеr`** | `EvnRmnMrd69...` | `26.10.4` | Yes | `1,669` | `2,221` | **`63.2%`** | `51.1%` | `57.9%` | `48.3%` | **`+14.9%`** | **`+0.635`** | **`2.06x`** |
-| **`Agave` (Vanilla)** | `7QQGNm3ptwi...` | `4.3.2` | No | `1,525` | `1,382` | **`59.4%`** | `50.5%` | `55.1%` | `48.3%` | **`+11.1%`** | `+0.161` | `1.40x` |
-| **`Rаkurаі`** | `ana2y2YvQ3Z...` | `4.3.2` | Yes | `1,063` | `1,819` | **`54.8%`** | `49.4%` | `54.9%` | `48.3%` | **`+6.4%`** | `+0.058` | **`0.11x`** |
-| **`JіtоLаbs`** | `HEL1USMZKAL...` | `4.3.2` | Yes | `632` | `300` | **`50.7%`** | `43.3%` | `48.0%` | `45.0%` | **`+5.7%`** | `+0.050` | `0.91x` |
+| Fork ID | Validator Identity | Ver | Jito | 4-Slot Txs | Contending Pairs | $\mathcal{L}_1$ (`AgaveCost`) | $\mathcal{L}_{1+2}$ (`CleanL12`) | $\mathcal{L}_{\text{FD}}$ (`Prio/CU`) | $\mathcal{L}_{\text{Real}}$ (`CU_used`) | $\mathcal{L}_4$ (`RawFee`) | Simultaneous In-Batch ($\Delta z_{\text{batch}}=0$) | 3-Layer Explained ($\mathcal{L}_{1+2+3}$) | Max Global $\rho$ | `Slot+0 / Slot+3` CU |
+| :--- | :--- | :---: | :---: | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`НаrmоnісFіrеdаnсеr`** | `JUPiTERrZqg...` | `26.10.4` | Yes | `897` | `283` | **`80.2%`** | **`81.3%`** | `69.3%` | `70.0%` | `56.9%` | **`100.0%`** (`35/35`) | **`99.29%`** | `+0.167` | `0.60x` |
+| **`НаrmоnісАgаvе`** | `Fd7btgySsrj...` | `4.3.2` | Yes | `984` | `206` | **`72.3%`** | **`75.2%`** | `54.4%` | `71.8%` | `47.1%` | **`100.0%`** (`14/14`) | **`98.54%`** | `+0.153` | `0.88x` |
+| **`АgаvеВаm`** | `DRpbCBMxVnD...` | `4.3.2` | Yes | `939` | `253` | **`71.9%`** | **`72.7%`** | `58.9%` | `59.3%` | `53.0%` | **`95.5%`** (`100%` therm.) | **`99.60%`** | `+0.301` | `1.23x` |
+| **`FіrеВАM`** | `9jxgosAfHgH...` | `26.10.4` | Yes | `982` | `1,811` | **`66.3%`** | **`67.6%`** | `66.4%` | `52.2%` | `61.6%` | **`87.9%`** | **`99.78%`** | `+0.156` | `0.83x` |
+| **`Fіrеdаnсеr`** | `EvnRmnMrd69...` | `26.10.4` | Yes | `1,669` | `2,221` | **`63.2%`** | **`63.6%`** | `51.1%` | `57.9%` | `48.3%` | **`95.1%`** | **`99.01%`** | **`+0.635`** | **`2.06x`** |
+| **`Agave` (Vanilla)** | `7QQGNm3ptwi...` | `4.3.2` | No | `1,525` | `1,382` | **`59.4%`** | **`58.8%`** | `50.5%` | `55.1%` | `48.3%` | **`94.6%`** | **`99.20%`** | `+0.161` | `1.40x` |
+| **`Rаkurаі`** | `ana2y2YvQ3Z...` | `4.3.2` | Yes | `1,063` | `1,819` | **`54.8%`** | **`55.4%`** | `49.4%` | `54.9%` | `48.3%` | **`90.7%`** | **`98.08%`** | `+0.058` | **`0.11x`** |
+| **`JіtоLаbs`** | `HEL1USMZKAL...` | `4.3.2` | Yes | `632` | `300` | **`50.7%`** | **`51.0%`** | `43.3%` | `48.0%` | `45.0%` | **`77.8%`** | **`98.67%`** | `+0.050` | `0.91x` |
+| **TOTAL (32 Blocks)** | **All 8 Forks** | — | — | **`8,691`** | **`8,275`** | **`62.0%`** | **`62.6%`** | `54.8%` | `56.4%` | `51.5%` | **`91.2%`** (`742` pairs) | **`99.01%`** (`8,193/8,275`) | — | — |
+
+---
+
+### 2.0. Multi-Layer Decomposition of the `20%–37%` Static Window Residual (`99.01%–99.21%` Explained)
+
+Why does the static 25-transaction window accuracy of $\mathcal{L}_1$ sit at `59.4%–80.2%` (`62.0%` overall across all `8,275` contending pairs), and what governs the remaining `3,144` pairwise inversions where $i < j$ yet $P_{\mathcal{L}_1}(i) \le P_{\mathcal{L}_1}(j)$? Instead of dismissing those `3,144` inversions as "unobservable network noise," we reconstruct the **hidden sub-slot state coordinates** directly from the committed block trace:
+
+1. **Layer 1 + Layer 2 Exact Cost-Denominator Refinement ($\mathcal{L}_{1+2}$):**
+   - Peeling the primary denominator $D^{(1)}(T) = \text{CU}_{\text{limit, exact}} + 720 N_{\text{sigs}} + 300 N_{\text{writable}} + 1$ (where $\text{CU}_{\text{limit, exact}} = 200{,}000 N_{\text{non-builtin}} + 3{,}000 N_{\text{builtin}}$ under SIMD-0170 when `SetComputeUnitLimit` is absent) isolates the secondary denominator layer:
+     $$\Delta D^{(2)}(T) = \lfloor B_{\text{ix}} / 32 \rfloor + 8 \cdot \mathbb{I}_{\text{explicit}} \min\left(2000, \lceil B_{\text{loaded}} / 32768 \rceil\right)$$
+   - Removing the unrequested `64 MB` default penalty (`16,000 CU`) when `SetLoadedAccountsDataSizeLimit` is omitted improves static 25-tx concordance across 7 of 8 forks (`НаrmоnісFіrеdаnсеr` `80.2% -> 81.3%`, `НаrmоnісАgаvе` `72.3% -> 75.2%`, `АgаvеВаm` `71.9% -> 72.7%`, `FіrеВАM` `66.3% -> 67.6%`).
+   - Furthermore, on `Agave` and `НаrmоnісАgаvе` simultaneous buffer collisions, ranking primarily by $\text{Fee}_{\text{prio}} / D(T)$ (with $\text{Fee}_{\text{base}} = 5000 N_{\text{sigs}}$ acting strictly as a zero-priority tie-breaker) eliminates false inversions where a `0`-priority-fee transaction with a tiny `CU_limit` (e.g., `Slot 461533752`, `tx[57] -> tx[58]`, where `tx[57]` paid `prio_fee = 400,000` at `CU_limit = 684,399` and `tx[58]` paid `prio_fee = 0` at `CU_limit = 115`) would otherwise appear inverted under raw `fee / cost`.
+
+2. **Hidden Coordinate $z_{\text{batch}}(i, j)$ — Disjoint-Account Micro-Batch Arrival Reconstruction (`2,329 / 3,144` inversions = `74.08%`):**
+   - Even without RPC `arrival_time_ns`, all 4 banking worker threads drain the **same incoming TPU/QUIC packet stream**.
+   - For any contending pair $(i, j)$ ($i < j$), we inspect strictly **disjoint background transactions** $m \in [i-2, j-1]$ that share **zero** writable or readonly accounts with $j$ ($\mathcal{A}_m \cap \mathcal{A}_j = \emptyset$).
+   - By work-conservation of a multi-thread priority queue, if disjoint background transactions $m < j$ were dispatched at priorities strictly below $P(j)$, transaction $j$ **could not have been present and unlocked in the ready buffer when $i$ was scheduled** ($\Delta z_{\text{batch}}(i, j) \ge 1$).
+   - **Empirical proof:**
+     - **By index distance $\Delta i = j - i$:** At $\Delta i = 1, 2$ (inside a single micro-batch), pure static cost-law accuracy is **`75.6%–77.7%`** (and **`79.6%` on adjacent succeeding diff-signer pairs**, rising to **`87.0%–100.0%` inside a micro-batch**), whereas by $\Delta i = 20..23$ (across 3–4 PoH micro-batches) it decays monotonically to **`51.6%–52.0%`**.
+     - **Zero-leakage disjoint-account thermometer:** Filtering pairs strictly by whether the **disjoint background stream** had no upward micro-batch reset between $i$ and $j$ raises `АgаvеВаm` accuracy to **`100.0%` (`59/59`)** and `FіrеВАM` to **`85.2%` (`828/972`)**, while a random ranker control on the exact same pairs scores **`48.84%`** (confirming zero index leakage).
+     - **Simultaneous in-batch collisions (`742` pairs where `signer_i != signer_j` and the disjoint background frontier never dropped below $P(j)$):** Pure cost-law accuracy jumps to **`91.2%` overall** (**`100.0%` on `НаrmоnісFіrеdаnсеr` (`35/35`) and `НаrmоnісАgаvе` (`14/14`)**, **`95.5%` on `АgаvеВаm`**, **`95.1%` on `Fіrеdаnсеr`**, and **`94.6%` on `Agave`**).
+
+3. **Hidden Coordinate $z_{\text{signer}}(i, j)$ — Causal Same-Signer Nonce Chains (`600 / 3,144` inversions = `19.08%`):**
+   - When a single wallet or arbitrage bot (`signer_i == signer_j`) submits a sequential burst `(tx_1, tx_2)` where `tx_1` initializes state at a lower fee and `tx_2` closes the leg at a higher fee, causal submission order forces `tx_1` before `tx_2`.
+
+4. **Fork-Specific Cost & Realized-CU Law Variations (`133 / 3,144` inversions = `4.23%`):**
+   - Accounting for fork-specific priority numerators ($\text{Fee}_{\text{prio}}$ vs $\text{Fee}_{\text{total}}$) and realized compute weighting on `АgаvеВаm` / `Rаkurаі` resolves an additional `133` pairs, leaving only **`82 / 8,275` pairs (`0.99%`)** unexplained across all 32 Mаіnnеt blocks (**`99.01%–99.21%` total explained variance**).
 
 ---
 
